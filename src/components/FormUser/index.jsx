@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router";
-import { UserDataSetter } from "../../redux/actions/userActions";
+import { UserDataEdit, UserDataSetter } from "../../redux/actions/userActions";
 
 const FormUser = (props) => {
+  const { userid } = props;
   const initForm = {
     name: "",
     email: "",
@@ -13,7 +14,7 @@ const FormUser = (props) => {
   };
   const [form, setForm] = useState(initForm);
 
-  const { addNewUser } = props;
+  const { addNewUser, editUser } = props;
 
   const history = useHistory();
 
@@ -21,6 +22,34 @@ const FormUser = (props) => {
     const { id, value } = target;
 
     setForm({ ...form, [id]: value });
+  };
+
+  const defineButton = () => {
+    if (Number(userid) > 0) {
+      return (
+        <button
+          type="button"
+          onClick={() => {
+            editUser(Number(userid),form);
+            history.push("/");
+          }}
+        >
+          Editar
+        </button>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          addNewUser(form);
+          history.push("/");
+        }}
+      >
+        Adicionar
+      </button>
+    )
   };
 
   return (
@@ -69,15 +98,7 @@ const FormUser = (props) => {
           <option value="administrador">administrador</option>
         </select>
       </label>
-      <button
-        type="button"
-        onClick={() => {
-          addNewUser(form);
-          history.push("/");
-        }}
-      >
-        Adicionar
-      </button>
+      {defineButton()}
     </form>
   );
 };
@@ -85,6 +106,8 @@ const FormUser = (props) => {
 const mapDispatchToProps = (dispatch) => ({
   addNewUser: ({ name, email, password, birthdate, userType }) =>
     dispatch(UserDataSetter(name, email, password, birthdate, userType)),
+  editUser: (id, { name, email, password, birthdate, userType }) =>
+    dispatch(UserDataEdit(id, name, email, password, birthdate, userType)),
 });
 
 export default connect(null, mapDispatchToProps)(FormUser);
