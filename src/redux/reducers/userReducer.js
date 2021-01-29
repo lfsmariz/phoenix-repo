@@ -1,5 +1,5 @@
 import mockUser from "../../mocks/mockUser";
-import { REMOVE_USER_DATA, SET_USER_DATA } from "../actions/userActions";
+import { EDIT_USER_DATA, REMOVE_USER_DATA, SET_USER_DATA } from "../actions/userActions";
 
 const initialState = { users: mockUser, counter: 3 };
 
@@ -22,10 +22,26 @@ const userReducer = (state = initialState, action) => {
         counter: state.counter + 1,
       };
 
-      case REMOVE_USER_DATA:
+    case REMOVE_USER_DATA:
       return {
         ...state,
-        users: state.users.filter(elem => elem.id !== action.id),
+        users: state.users.filter((elem) => elem.id !== action.id),
+      };
+
+    case EDIT_USER_DATA:
+      return {
+        ...state,
+        users: [
+          ...state.users.filter((elem) => elem.id !== action.id),
+          {
+            id: action.id,
+            name: action.name,
+            email: action.email,
+            password: action.password,
+            birthdate: action.birthdate,
+            userType: action.userType,
+          },
+        ],
       };
 
     default:
